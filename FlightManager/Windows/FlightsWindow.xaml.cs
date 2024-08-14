@@ -1,11 +1,9 @@
-﻿using FlightManager.Models;
+﻿using FlightManager.Api;
+using FlightManager.Models;
 using FlightManager.Utils;
 using FlightManager.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -14,17 +12,14 @@ namespace FlightManager.Windows
     public partial class FlightsWindow : Window
     {
         private FlightsViewModel _viewModel;
-        private readonly HttpClient _httpClient;
+        private readonly ApiClient _apiClient;
 
         public FlightsWindow()
         {
             InitializeComponent();
             _viewModel = new FlightsViewModel();
             DataContext = _viewModel;
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44305/api/") 
-            };
+            _apiClient = new ApiClient(); // Используем ApiClient с адресом из конфигурации
         }
 
         private async void LoadData_Click(object sender, RoutedEventArgs e)
@@ -71,7 +66,7 @@ namespace FlightManager.Windows
         private async Task PostFlightsToApiAsync(ObservableCollection<Flight> flights)
         {
             var flightsList = new List<Flight>(flights);
-            var response = await _httpClient.PostAsJsonAsync("Flights", flightsList);
+            var response = await _apiClient.PostAsJsonAsync("Flights", flightsList);
 
             if (response.IsSuccessStatusCode)
             {
