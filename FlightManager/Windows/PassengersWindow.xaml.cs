@@ -40,5 +40,19 @@ namespace FlightManager.Windows
            
             this.Close();
         }
+
+        private async void SaveData_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                var saver = new PassengerDataSaver();
+                await saver.SaveDataAsync(_viewModel.Passengers, saveFileDialog.FileName);
+            }
+        }
     }
 }

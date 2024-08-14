@@ -5,6 +5,7 @@
     <Grid>
         <DockPanel>
             <Button Content="Загрузить данные" Click="LoadData_Click" DockPanel.Dock="Top" Margin="10"/>
+            <Button Content="Сохранить данные" Click="SaveData_Click" DockPanel.Dock="Top" Margin="10"/>
             <Button Content="Назад" Click="Back_Click" DockPanel.Dock="Top" Margin="10"/>
             <TextBlock Text="Список рейсов" FontSize="24" FontWeight="Bold" Margin="10" DockPanel.Dock="Top"/>
             <DataGrid ItemsSource="{Binding Flights}" AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" CanUserDeleteRows="False">
