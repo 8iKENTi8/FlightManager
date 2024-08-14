@@ -1,6 +1,12 @@
-﻿using FlightManager.Utils;
+﻿using FlightManager.Models;
+using FlightManager.Utils;
 using FlightManager.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace FlightManager.Windows
@@ -8,12 +14,17 @@ namespace FlightManager.Windows
     public partial class FlightsWindow : Window
     {
         private FlightsViewModel _viewModel;
+        private readonly HttpClient _httpClient;
 
         public FlightsWindow()
         {
             InitializeComponent();
             _viewModel = new FlightsViewModel();
             DataContext = _viewModel;
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44305/api/") 
+            };
         }
 
         private async void LoadData_Click(object sender, RoutedEventArgs e)
@@ -32,12 +43,14 @@ namespace FlightManager.Windows
                 {
                     _viewModel.Flights.Add(flight);
                 }
+
+                // Отправляем данные в API сразу после загрузки
+                await PostFlightsToApiAsync(_viewModel.Flights);
             }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-           
             this.Close();
         }
 
@@ -55,5 +68,19 @@ namespace FlightManager.Windows
             }
         }
 
+        private async Task PostFlightsToApiAsync(ObservableCollection<Flight> flights)
+        {
+            var flightsList = new List<Flight>(flights);
+            var response = await _httpClient.PostAsJsonAsync("Flights", flightsList);
+
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Данные успешно отправлены в базу данных.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Произошла ошибка при отправке данных в базу данных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }
