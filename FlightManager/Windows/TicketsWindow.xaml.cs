@@ -1,16 +1,43 @@
-﻿using System.Windows;
+﻿using FlightManager.Utils;
+using FlightManager.ViewModels;
+using System;
+using System.Windows;
 
 namespace FlightManager.Windows
 {
     public partial class TicketsWindow : Window
     {
+        private TicketsViewModel _viewModel;
+
         public TicketsWindow()
         {
             InitializeComponent();
-            DataContext = ((ViewModelLocator)Application.Current.Resources["ViewModelLocator"]).TicketsViewModel;
+            _viewModel = new TicketsViewModel();
+            DataContext = _viewModel;
         }
+
+        private async void LoadData_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var loader = new TicketDataLoader(); 
+                var tickets = await loader.LoadDataAsync(openFileDialog.FileName);
+                _viewModel.Tickets.Clear();
+                foreach (var ticket in tickets)
+                {
+                    _viewModel.Tickets.Add(ticket);
+                }
+            }
+        }
+
         private void Back_Click(object sender, RoutedEventArgs e)
         {
+     
             this.Close();
         }
     }
