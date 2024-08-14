@@ -1,28 +1,20 @@
 ﻿using FlightManager.Models;
+using FlightManager.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace FlightManager.ViewModels
 {
     public class FlightsViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<Flight> _flights;
-        private ObservableCollection<Passenger> _passengers;
+        private readonly FlightService _flightService;
 
         public FlightsViewModel()
         {
-            // Инициализация данных
-            _flights = new ObservableCollection<Flight>
-            {
-                new Flight { FlightId = 1, FlightNumber = "F123", DepartureTime = DateTime.Now, ArrivalTime = DateTime.Now.AddHours(2) },
-                new Flight { FlightId = 2, FlightNumber = "F456", DepartureTime = DateTime.Now.AddDays(1), ArrivalTime = DateTime.Now.AddDays(1).AddHours(3) }
-            };
-
-            _passengers = new ObservableCollection<Passenger>
-            {
-                new Passenger { PassengerId = 1, LastName = "Ivanov", FirstName = "Ivan", MiddleName = "Ivanovich" },
-                new Passenger { PassengerId = 2, LastName = "Petrov", FirstName = "Petr", MiddleName = "Petrovich" }
-            };
+            _flights = new ObservableCollection<Flight>();
+            _flightService = new FlightService();
         }
 
         public ObservableCollection<Flight> Flights
@@ -38,17 +30,19 @@ namespace FlightManager.ViewModels
             }
         }
 
-        public ObservableCollection<Passenger> Passengers
+        public async Task LoadFlightsAsync()
         {
-            get => _passengers;
-            set
+            var flights = await _flightService.GetFlightsAsync();
+            Flights.Clear();
+            foreach (var flight in flights)
             {
-                if (_passengers != value)
-                {
-                    _passengers = value;
-                    OnPropertyChanged(nameof(Passengers));
-                }
+                Flights.Add(flight);
             }
+        }
+
+        public async Task<bool> SaveFlightsAsync(IEnumerable<Flight> flights)
+        {
+            return await _flightService.PostFlightsAsync(flights);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,7 +1,6 @@
-﻿using FlightManager.Api;
-using FlightManager.Models;
-using FlightManager.Utils;
+﻿using FlightManager.Utils;
 using FlightManager.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -12,14 +11,12 @@ namespace FlightManager.Windows
     public partial class FlightsWindow : Window
     {
         private FlightsViewModel _viewModel;
-        private readonly ApiClient _apiClient;
 
         public FlightsWindow()
         {
             InitializeComponent();
             _viewModel = new FlightsViewModel();
             DataContext = _viewModel;
-            _apiClient = new ApiClient(); // Используем ApiClient с адресом из конфигурации
         }
 
         private async void LoadData_Click(object sender, RoutedEventArgs e)
@@ -40,7 +37,15 @@ namespace FlightManager.Windows
                 }
 
                 // Отправляем данные в API сразу после загрузки
-                await PostFlightsToApiAsync(_viewModel.Flights);
+                var success = await _viewModel.SaveFlightsAsync(_viewModel.Flights);
+                if (success)
+                {
+                    MessageBox.Show("Данные успешно отправлены в базу данных.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Произошла ошибка при отправке данных в базу данных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -60,21 +65,6 @@ namespace FlightManager.Windows
             {
                 var saver = new FlightDataSaver();
                 await saver.SaveDataAsync(_viewModel.Flights, saveFileDialog.FileName);
-            }
-        }
-
-        private async Task PostFlightsToApiAsync(ObservableCollection<Flight> flights)
-        {
-            var flightsList = new List<Flight>(flights);
-            var response = await _apiClient.PostAsJsonAsync("Flights", flightsList);
-
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Данные успешно отправлены в базу данных.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Произошла ошибка при отправке данных в базу данных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
