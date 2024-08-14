@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:FlightManager.Windows"
-        Title="Flight Manager" Height="400" Width="600">
+        Title="Flight Manager" Height="400" Width="600"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button Content="Открыть рейсы" Click="OpenFlightsWindow_Click" Width="200" Margin="10"/>
