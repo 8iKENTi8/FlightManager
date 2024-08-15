@@ -1,9 +1,11 @@
 ﻿using FlightManager.Models;
 using FlightManager.Utils;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Windows;
+using Newtonsoft.Json;
 
 public class FlightsViewModel : INotifyPropertyChanged
 {
@@ -53,15 +55,30 @@ public class FlightsViewModel : INotifyPropertyChanged
 
     public async Task<bool> AddFlightsToDatabaseAsync(IEnumerable<Flight> flights)
     {
-        var success = await _flightService.AddAsync(flights);
-        if (success)
+        var response = await _flightService.AddAsync(flights);
+        if (response.IsSuccessStatusCode)
         {
-            // Обновление списка рейсов после успешного добавления данных
-            await LoadFlightsFromDatabaseAsync();
-        }
-        return success;
-    }
+            var content = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                // Десериализация сообщения о конфликте
+                var conflictResponse = JsonConvert.DeserializeObject<dynamic>(content);
+                var message = conflictResponse?.Message;
+                var existingFlights = conflictResponse?.ExistingFlights;
 
+                // Вывод сообщения или обработка конфликта
+                MessageBox.Show(message, "Конфликт данных", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            }
+            else
+            {
+                // Обновление списка рейсов после успешного добавления данных
+                await LoadFlightsFromDatabaseAsync();
+            }
+            return true;
+        }
+        return false;
+    }
 
     public event PropertyChangedEventHandler PropertyChanged;
 

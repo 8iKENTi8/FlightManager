@@ -2,6 +2,7 @@
 using FlightManager.Models;
 using FlightManager.Utils;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -20,7 +21,6 @@ public class FlightRepository : IRepository<Flight>
 
         if (response.IsSuccessStatusCode)
         {
-            // Убедитесь, что у вас подключено пространство имен System.Net.Http.Json
             var flights = await response.Content.ReadFromJsonAsync<List<Flight>>();
             return flights ?? new List<Flight>();
         }
@@ -34,16 +34,13 @@ public class FlightRepository : IRepository<Flight>
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> AddAsync(IEnumerable<Flight> flights)
+    public async Task<HttpResponseMessage> AddAsync(IEnumerable<Flight> flights)
     {
-        var response = await _apiClient.PostAsJsonAsync("Flights/add", flights);
-        return response.IsSuccessStatusCode;
+        return await _apiClient.PostAsJsonAsync("Flights/add", flights);
     }
 
-    // Реализация метода SaveAsync из интерфейса IRepository<T>
     public async Task<bool> SaveAsync(IEnumerable<Flight> flights)
     {
-        // Это может быть реализовано как вызов ReplaceAllAsync, если ваша логика требует полного перезаписывания
         return await ReplaceAllAsync(flights);
     }
 }
