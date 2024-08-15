@@ -96,5 +96,32 @@ namespace FlightManager.Windows
         {
             Close();
         }
+
+        private async void SaveData_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                FileName = "flights_data" // Задайте имя файла по умолчанию
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                var filePath = saveFileDialog.FileName;
+                var saver = new FlightDataSaver();
+
+                try
+                {
+                    // Сохранение данных в выбранный файл
+                    await saver.SaveDataAsync(_viewModel.Flights, filePath);
+                    MessageBox.Show("Данные успешно сохранены в файл.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch
+                {
+                    MessageBox.Show("Произошла ошибка при сохранении данных в файл.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
     }
 }
