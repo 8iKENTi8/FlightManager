@@ -5,15 +5,16 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <DockPanel>
-            <Button Content="Загрузить данные" Click="LoadData_Click" DockPanel.Dock="Top" Margin="10"/>
+            <Button Content="Перезаписать данные" Click="ReplaceData_Click" DockPanel.Dock="Top" Margin="10"/>
+            <Button Content="Добавить новые билеты" Click="AddData_Click" DockPanel.Dock="Top" Margin="10"/>
             <Button Content="Сохранить данные" Click="SaveData_Click" DockPanel.Dock="Top" Margin="10"/>
             <Button Content="Назад" Click="Back_Click" DockPanel.Dock="Top" Margin="10"/>
             <TextBlock Text="Список билетов" FontSize="24" FontWeight="Bold" Margin="10" DockPanel.Dock="Top"/>
             <DataGrid ItemsSource="{Binding Tickets}" AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" CanUserDeleteRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Номер билета" Binding="{Binding TicketId}" Width="150"/>
-                    <DataGridTextColumn Header="Id пассажира" Binding="{Binding PassengerId}" Width="150"/>
-                    <DataGridTextColumn Header="Id рейса" Binding="{Binding FlightId}" Width="150"/>
+                    <DataGridTextColumn Header="ID Билета" Binding="{Binding TicketId}" Width="100"/>
+                    <DataGridTextColumn Header="ID Пассажира" Binding="{Binding PassengerId}" Width="150"/>
+                    <DataGridTextColumn Header="ID Рейса" Binding="{Binding FlightId}" Width="150"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

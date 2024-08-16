@@ -1,41 +1,42 @@
 ﻿using FlightManager.Models;
+using FlightManager.Repositories.Implementations;
+using FlightManager.Utils;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace FlightManager.ViewModels
 {
-    public class TicketsViewModel : INotifyPropertyChanged
+    public class TicketsViewModel
     {
-        private ObservableCollection<Ticket> _tickets;
+        public ObservableCollection<Ticket> Tickets { get; set; }
+
+        private readonly TicketRepository _ticketRepository;
 
         public TicketsViewModel()
         {
-            // Имитируем загрузку данных
-            _tickets = new ObservableCollection<Ticket>
-            {
-                new Ticket { TicketId = 1, PassengerId = 101, FlightId = 201 },
-                new Ticket { TicketId = 2, PassengerId = 102, FlightId = 202 }
-            };
+            Tickets = new ObservableCollection<Ticket>();
+            _ticketRepository = new TicketRepository();
         }
 
-        public ObservableCollection<Ticket> Tickets
+        public async Task<bool> ReplaceTicketsInDatabaseAsync(IEnumerable<Ticket> tickets)
         {
-            get => _tickets;
-            set
+            return await _ticketRepository.ReplaceAllAsync(tickets);
+        }
+
+        public async Task<bool> AddTicketsToDatabaseAsync(IEnumerable<Ticket> tickets)
+        {
+            var response = await _ticketRepository.AddAsync(tickets);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task LoadTicketsAsync()
+        {
+            var tickets = await _ticketRepository.GetAllAsync();
+            Tickets.Clear();
+            foreach (var ticket in tickets)
             {
-                if (_tickets != value)
-                {
-                    _tickets = value;
-                    OnPropertyChanged(nameof(Tickets));
-                }
+                Tickets.Add(ticket);
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
