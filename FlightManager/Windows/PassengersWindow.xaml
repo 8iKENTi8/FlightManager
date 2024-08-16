@@ -5,8 +5,13 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <DockPanel>
-            <Button Content="Загрузить данные" Click="LoadData_Click" DockPanel.Dock="Top" Margin="10"/>
+            <!-- Кнопка для полной перезаписи данных -->
+            <Button Content="Перезаписать данные" Click="ReplaceData_Click" DockPanel.Dock="Top" Margin="10"/>
+            <!-- Кнопка для добавления новых данных -->
+            <Button Content="Добавить новых пассажиров" Click="AddData_Click" DockPanel.Dock="Top" Margin="10"/>
+            <!-- Кнопка для сохранения данных в файл -->
             <Button Content="Сохранить данные" Click="SaveData_Click" DockPanel.Dock="Top" Margin="10"/>
+            <!-- Кнопка для возврата -->
             <Button Content="Назад" Click="Back_Click" DockPanel.Dock="Top" Margin="10"/>
             <TextBlock Text="Список пассажиров" FontSize="24" FontWeight="Bold" Margin="10" DockPanel.Dock="Top"/>
             <DataGrid ItemsSource="{Binding Passengers}" AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" CanUserDeleteRows="False">

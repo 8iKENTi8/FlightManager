@@ -68,7 +68,6 @@ public class FlightsViewModel : INotifyPropertyChanged
 
                 // Вывод сообщения или обработка конфликта
                 MessageBox.Show(message, "Конфликт данных", MessageBoxButton.OK, MessageBoxImage.Warning);
-
             }
             else
             {
@@ -80,7 +79,7 @@ public class FlightsViewModel : INotifyPropertyChanged
         return false;
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged(string propertyName)
     {

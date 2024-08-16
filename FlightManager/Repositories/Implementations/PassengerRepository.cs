@@ -1,12 +1,41 @@
-﻿using System;
+﻿using FlightManager.Api;
+using FlightManager.Models;
+using FlightManager.Utils;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace FlightManager.Repositories.Implementations
+public class PassengerRepository : IRepository<Passenger>
 {
-    internal class PassengerRepository
+    private readonly ApiClient _apiClient;
+
+    public PassengerRepository()
     {
+        _apiClient = new ApiClient(ApiConfiguration.BaseAddress);
+    }
+
+    public async Task<List<Passenger>> GetAllAsync()
+    {
+        var response = await _apiClient.GetAsync("Passengers");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var passengers = await response.Content.ReadFromJsonAsync<List<Passenger>>();
+            return passengers ?? new List<Passenger>();
+        }
+
+        return new List<Passenger>();
+    }
+
+    public async Task<bool> ReplaceAllAsync(IEnumerable<Passenger> passengers)
+    {
+        var response = await _apiClient.PostAsJsonAsync("Passengers/replace", passengers);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<HttpResponseMessage> AddAsync(IEnumerable<Passenger> passengers)
+    {
+        return await _apiClient.PostAsJsonAsync("Passengers/add", passengers);
     }
 }
