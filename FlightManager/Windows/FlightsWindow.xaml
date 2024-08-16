@@ -5,17 +5,14 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <DockPanel>
-            <!-- Кнопка для полной перезаписи данных -->
             <Button Content="Перезаписать данные" Click="ReplaceData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <!-- Кнопка для добавления новых данных -->
             <Button Content="Добавить новые рейсы" Click="AddData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <!-- Кнопка для сохранения данных в файл -->
             <Button Content="Сохранить данные" Click="SaveData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <!-- Кнопка для возврата -->
             <Button Content="Назад" Click="Back_Click" DockPanel.Dock="Top" Margin="10"/>
             <TextBlock Text="Список рейсов" FontSize="24" FontWeight="Bold" Margin="10" DockPanel.Dock="Top"/>
             <DataGrid ItemsSource="{Binding Flights}" AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" CanUserDeleteRows="False">
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID Рейса" Binding="{Binding FlightId}" Width="100"/>
                     <DataGridTextColumn Header="Номер рейса" Binding="{Binding FlightNumber}" Width="150"/>
                     <DataGridTextColumn Header="Время вылета" Binding="{Binding DepartureTime}" Width="150"/>
                     <DataGridTextColumn Header="Время прибытия" Binding="{Binding ArrivalTime}" Width="150"/>

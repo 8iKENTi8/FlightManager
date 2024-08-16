@@ -62,8 +62,6 @@ namespace FlightManager.Windows
                 }
             }
         }
-
-
         private async void AddData_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new Microsoft.Win32.OpenFileDialog
@@ -82,6 +80,8 @@ namespace FlightManager.Windows
                     var success = await _viewModel.AddTicketsToDatabaseAsync(tickets);
                     if (success)
                     {
+                        await _viewModel.LoadTicketsAsync();
+
                         MessageBox.Show("Новые билеты успешно добавлены в базу данных.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else
@@ -95,6 +95,8 @@ namespace FlightManager.Windows
                 }
             }
         }
+
+
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
