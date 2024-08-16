@@ -1,20 +1,51 @@
 ﻿<Window x:Class="FlightManager.Windows.TicketsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:FlightManager.ViewModels"
         Title="Список билетов" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <DockPanel>
-            <Button Content="Перезаписать данные" Click="ReplaceData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <Button Content="Добавить новые билеты" Click="AddData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <Button Content="Сохранить данные" Click="SaveData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <Button Content="Назад" Click="Back_Click" DockPanel.Dock="Top" Margin="10"/>
-            <TextBlock Text="Список билетов" FontSize="24" FontWeight="Bold" Margin="10" DockPanel.Dock="Top"/>
-            <DataGrid ItemsSource="{Binding Tickets}" AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" CanUserDeleteRows="False">
+            <!-- Кнопка для перезаписи данных -->
+            <Button Content="Перезаписать данные" 
+                    Command="{Binding ReplaceDataCommand}" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Кнопка для добавления новых билетов -->
+            <Button Content="Добавить новые билеты" 
+                    Command="{Binding AddDataCommand}" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Кнопка для сохранения данных -->
+            <Button Content="Сохранить данные" 
+                    Command="{Binding SaveDataCommand}" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Кнопка для закрытия окна, обработчик события в коде-behind -->
+            <Button Content="Назад" 
+                    Click="Back_Click" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Заголовок -->
+            <TextBlock Text="Список билетов" 
+                       FontSize="24" FontWeight="Bold" 
+                       Margin="10" DockPanel.Dock="Top"/>
+
+            <!-- Таблица для отображения списка билетов -->
+            <DataGrid ItemsSource="{Binding Tickets}" 
+                      AutoGenerateColumns="False" 
+                      Margin="10" CanUserAddRows="False" 
+                      CanUserDeleteRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID Билета" Binding="{Binding TicketId}" Width="100"/>
-                    <DataGridTextColumn Header="ID Пассажира" Binding="{Binding PassengerId}" Width="150"/>
-                    <DataGridTextColumn Header="ID Рейса" Binding="{Binding FlightId}" Width="150"/>
+                    <DataGridTextColumn Header="ID Билета" 
+                                        Binding="{Binding TicketId}" 
+                                        Width="100"/>
+                    <DataGridTextColumn Header="ID Пассажира" 
+                                        Binding="{Binding PassengerId}" 
+                                        Width="150"/>
+                    <DataGridTextColumn Header="ID Рейса" 
+                                        Binding="{Binding FlightId}" 
+                                        Width="150"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

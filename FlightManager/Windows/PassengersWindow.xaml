@@ -5,17 +5,49 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <DockPanel>
-            <Button Content="Перезаписать данные" Click="ReplaceData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <Button Content="Добавить новых пассажиров" Click="AddData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <Button Content="Сохранить данные" Click="SaveData_Click" DockPanel.Dock="Top" Margin="10"/>
-            <Button Content="Назад" Click="Back_Click" DockPanel.Dock="Top" Margin="10"/>
-            <TextBlock Text="Список пассажиров" FontSize="24" FontWeight="Bold" Margin="10" DockPanel.Dock="Top"/>
-            <DataGrid ItemsSource="{Binding Passengers}" AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" CanUserDeleteRows="False">
+            <!-- Кнопка для замены данных пассажиров -->
+            <Button Content="Перезаписать данные" 
+                    Command="{Binding ReplaceDataCommand}" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Кнопка для добавления новых пассажиров -->
+            <Button Content="Добавить новых пассажиров" 
+                    Command="{Binding AddDataCommand}" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Кнопка для сохранения данных пассажиров -->
+            <Button Content="Сохранить данные" 
+                    Command="{Binding SaveDataCommand}" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Кнопка для закрытия окна, обработчик события в коде-behind -->
+            <Button Content="Назад" 
+                    Click="Back_Click" 
+                    DockPanel.Dock="Top" Margin="10"/>
+
+            <!-- Заголовок -->
+            <TextBlock Text="Список пассажиров" 
+                       FontSize="24" FontWeight="Bold" 
+                       Margin="10" DockPanel.Dock="Top"/>
+
+            <!-- Таблица для отображения списка пассажиров -->
+            <DataGrid ItemsSource="{Binding Passengers}" 
+                      AutoGenerateColumns="False" 
+                      Margin="10" CanUserAddRows="False" 
+                      CanUserDeleteRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID Пассажира" Binding="{Binding PassengerId}" Width="100"/>
-                    <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="150"/>
-                    <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="150"/>
-                    <DataGridTextColumn Header="Отчество" Binding="{Binding MiddleName}" Width="150"/>
+                    <DataGridTextColumn Header="ID Пассажира" 
+                                        Binding="{Binding PassengerId}" 
+                                        Width="100"/>
+                    <DataGridTextColumn Header="Фамилия" 
+                                        Binding="{Binding LastName}" 
+                                        Width="150"/>
+                    <DataGridTextColumn Header="Имя" 
+                                        Binding="{Binding FirstName}" 
+                                        Width="150"/>
+                    <DataGridTextColumn Header="Отчество" 
+                                        Binding="{Binding MiddleName}" 
+                                        Width="150"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

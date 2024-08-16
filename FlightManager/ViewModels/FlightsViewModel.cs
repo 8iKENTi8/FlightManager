@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using Newtonsoft.Json;
+using System.Windows.Input;
+using FlightManager.Utils.Helpers;
 
 public class FlightsViewModel : INotifyPropertyChanged
 {
@@ -14,12 +16,20 @@ public class FlightsViewModel : INotifyPropertyChanged
     private readonly FlightDataLoader _dataLoader;
     private readonly FlightDataSaver _dataSaver;
 
+    public ICommand ReplaceDataCommand { get; }
+    public ICommand AddDataCommand { get; }
+    public ICommand SaveDataCommand { get; }
+
     public FlightsViewModel()
     {
         _flights = new ObservableCollection<Flight>();
         _flightService = new FlightRepository();
         _dataLoader = new FlightDataLoader();
         _dataSaver = new FlightDataSaver();
+
+        ReplaceDataCommand = new RelayCommand(async () => await ReplaceDataAsync());
+        AddDataCommand = new RelayCommand(async () => await AddDataAsync());
+        SaveDataCommand = new RelayCommand(async () => await SaveDataAsync());
 
         // Загрузка данных из базы данных при инициализации
         LoadFlightsFromDatabaseAsync().ConfigureAwait(false);
@@ -38,7 +48,7 @@ public class FlightsViewModel : INotifyPropertyChanged
         }
     }
 
-    public async Task LoadFlightsFromDatabaseAsync()
+    private async Task LoadFlightsFromDatabaseAsync()
     {
         var flights = await _flightService.GetAllAsync();
         Flights.Clear();
@@ -48,12 +58,86 @@ public class FlightsViewModel : INotifyPropertyChanged
         }
     }
 
-    public async Task<bool> ReplaceFlightsInDatabaseAsync(IEnumerable<Flight> flights)
+    private async Task ReplaceDataAsync()
+    {
+        var filePath = DialogHelper.ShowOpenFileDialog();
+        if (filePath != null)
+        {
+            try
+            {
+                var flights = await _dataLoader.LoadDataAsync(filePath);
+                Flights.Clear();
+                foreach (var flight in flights)
+                {
+                    Flights.Add(flight);
+                }
+
+                var success = await ReplaceFlightsInDatabaseAsync(Flights);
+                if (success)
+                {
+                    MessageBox.Show("Данные успешно перезаписаны в базу данных.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Произошла ошибка при перезаписи данных в базу данных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Произошла ошибка при загрузке данных из файла.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    private async Task AddDataAsync()
+    {
+        var filePath = DialogHelper.ShowOpenFileDialog();
+        if (filePath != null)
+        {
+            try
+            {
+                var flights = await _dataLoader.LoadDataAsync(filePath);
+                var success = await AddFlightsToDatabaseAsync(flights);
+                if (success)
+                {
+                    MessageBox.Show("Новые рейсы успешно добавлены в базу данных.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await LoadFlightsFromDatabaseAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Произошла ошибка при добавлении новых рейсов в базу данных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Произошла ошибка при загрузке данных из файла.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    private async Task SaveDataAsync()
+    {
+        var filePath = DialogHelper.ShowSaveFileDialog(defaultFileName: "flights_data");
+        if (filePath != null)
+        {
+            try
+            {
+                await _dataSaver.SaveDataAsync(Flights, filePath);
+                MessageBox.Show("Данные успешно сохранены в файл.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch
+            {
+                MessageBox.Show("Произошла ошибка при сохранении данных в файл.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    private async Task<bool> ReplaceFlightsInDatabaseAsync(IEnumerable<Flight> flights)
     {
         return await _flightService.ReplaceAllAsync(flights);
     }
 
-    public async Task<bool> AddFlightsToDatabaseAsync(IEnumerable<Flight> flights)
+    private async Task<bool> AddFlightsToDatabaseAsync(IEnumerable<Flight> flights)
     {
         var response = await _flightService.AddAsync(flights);
         if (response.IsSuccessStatusCode)
@@ -61,17 +145,13 @@ public class FlightsViewModel : INotifyPropertyChanged
             var content = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
-                // Десериализация сообщения о конфликте
                 var conflictResponse = JsonConvert.DeserializeObject<dynamic>(content);
                 var message = conflictResponse?.Message;
                 var existingFlights = conflictResponse?.ExistingFlights;
-
-                // Вывод сообщения или обработка конфликта
                 MessageBox.Show(message, "Конфликт данных", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else
             {
-                // Обновление списка рейсов после успешного добавления данных
                 await LoadFlightsFromDatabaseAsync();
             }
             return true;
