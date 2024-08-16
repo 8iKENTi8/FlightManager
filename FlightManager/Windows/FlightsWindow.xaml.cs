@@ -1,4 +1,5 @@
 ﻿using FlightManager.Utils;
+using FlightManager.Utils.Helpers;
 using FlightManager.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,14 +20,9 @@ namespace FlightManager.Windows
 
         private async void ReplaceData_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            var filePath = DialogHelper.ShowOpenFileDialog();
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var filePath = openFileDialog.FileName;
                 var loader = new FlightDataLoader();
 
                 try
@@ -59,14 +55,9 @@ namespace FlightManager.Windows
 
         private async void AddData_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            var filePath = DialogHelper.ShowOpenFileDialog();
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var filePath = openFileDialog.FileName;
                 var loader = new FlightDataLoader();
 
                 try
@@ -99,15 +90,9 @@ namespace FlightManager.Windows
 
         private async void SaveData_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            var filePath = DialogHelper.ShowSaveFileDialog(defaultFileName: "flights_data");
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                FileName = "flights_data" // Задайте имя файла по умолчанию
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                var filePath = saveFileDialog.FileName;
                 var saver = new FlightDataSaver();
 
                 try
@@ -122,6 +107,5 @@ namespace FlightManager.Windows
                 }
             }
         }
-
     }
 }

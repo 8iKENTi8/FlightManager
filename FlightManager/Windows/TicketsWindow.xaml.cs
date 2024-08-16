@@ -1,4 +1,5 @@
 ﻿using FlightManager.Utils;
+using FlightManager.Utils.Helpers;
 using FlightManager.ViewModels;
 using System.Windows;
 
@@ -23,20 +24,15 @@ namespace FlightManager.Windows
 
         private async void ReplaceData_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            var filePath = DialogHelper.ShowOpenFileDialog();
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var filePath = openFileDialog.FileName;
                 var loader = new TicketDataLoader();
 
                 try
                 {
                     // Загрузка и парсинг данных из файла
-                    var tickets = await loader.LoadDataAsync(filePath); // Убедитесь, что это возвращает List<Ticket>
+                    var tickets = await loader.LoadDataAsync(filePath);
 
                     // Очистка текущего списка билетов и добавление новых данных
                     _viewModel.Tickets.Clear();
@@ -62,16 +58,12 @@ namespace FlightManager.Windows
                 }
             }
         }
+
         private async void AddData_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            var filePath = DialogHelper.ShowOpenFileDialog();
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var filePath = openFileDialog.FileName;
                 var loader = new TicketDataLoader();
 
                 try
@@ -96,8 +88,6 @@ namespace FlightManager.Windows
             }
         }
 
-
-
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -105,15 +95,9 @@ namespace FlightManager.Windows
 
         private async void SaveData_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            var filePath = DialogHelper.ShowSaveFileDialog(defaultFileName: "tickets_data");
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                FileName = "tickets_data"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                var filePath = saveFileDialog.FileName;
                 var saver = new TicketDataSaver();
 
                 try

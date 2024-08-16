@@ -1,4 +1,5 @@
 ﻿using FlightManager.Utils;
+using FlightManager.Utils.Helpers;
 using FlightManager.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,14 +20,9 @@ namespace FlightManager.Windows
 
         private async void ReplaceData_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            var filePath = DialogHelper.ShowOpenFileDialog();
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var filePath = openFileDialog.FileName;
                 var loader = new PassengerDataLoader();
 
                 try
@@ -57,14 +53,9 @@ namespace FlightManager.Windows
 
         private async void AddData_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            var filePath = DialogHelper.ShowOpenFileDialog();
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var filePath = openFileDialog.FileName;
                 var loader = new PassengerDataLoader();
 
                 try
@@ -94,15 +85,9 @@ namespace FlightManager.Windows
 
         private async void SaveData_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            var filePath = DialogHelper.ShowSaveFileDialog(defaultFileName: "passengers_data");
+            if (filePath != null)
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                FileName = "passengers_data"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                var filePath = saveFileDialog.FileName;
                 var saver = new PassengerDataSaver();
 
                 try
